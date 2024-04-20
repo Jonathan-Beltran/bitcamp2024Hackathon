@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import re
 
 class WebsiteScraper:
     def __init__(self, url):
@@ -33,20 +32,46 @@ class WebsiteScraper:
         self.driver.get(self.url)
 
     def extract_information(self):
-        """Extracts information from the webpage using BeautifulSoup."""
-        if not self.driver:
-            self.get_driver()
-        self.driver.get(self.url)
+        """Extracts information from the webpage and associated websites."""
+        self.navigate_to_url()
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
         page_source = self.driver.page_source
+        
+        # Print out the HTML content of the webpage
+        print("Page Source:", page_source)
+
         soup = BeautifulSoup(page_source, 'html.parser')
 
-        # Find all <h3> elements
-        h3_elements = soup.find_all('h3')
+        # Find the main content area where links are located
+        main_content = soup.find('div', class_='container content')
 
-        # Print the text content of each <h3> element
-        for h3 in h3_elements:
-            print(h3.get_text())
+        # Find all links within the main content area
+        if main_content:
+            links = main_content.find_all('a', href=True)
+
+            # Iterate through each link
+            for link in links:
+                website_url = link['href']
+                if website_url:
+                    self.driver.get(website_url)
+                    WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'p')))
+                    website_page_source = self.driver.page_source
+                    website_soup = BeautifulSoup(website_page_source, 'html.parser')
+
+                    # Extract information from the associated website
+                    h1_elements = website_soup.find_all('h1')
+                    for h1 in h1_elements:
+                        print("h1:", h1.get_text())
+
+                    date_elements = website_soup.find_all('span', class_='date')
+                    for date in date_elements:
+                        print("Date:", date.get_text())
+
+                    p_elements = website_soup.find_all('p')
+                    for p in p_elements:
+                        print("Paragraph:", p.get_text())
+        else:
+            print("Main content area not found")
 
     def close_driver(self):
         """Closes the web driver."""
@@ -65,6 +90,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 #Alex code
 def read_file(filename):
