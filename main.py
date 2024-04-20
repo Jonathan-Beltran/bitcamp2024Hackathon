@@ -52,18 +52,20 @@ if __name__ == "__main__":
     main()
 
 
-#Alex's code
-with open(filename) as file:
-    lines = file.readlines()
+#Alex code
+def read_file(filename):
+    with open(filename) as file:
+        lines = file.readlines()
+    return lines
 
-data = []
-for line in lines:
-    data.append(line)
+def make_table(lines):
+    data = []
+    for line in lines
+        data.appen(line)
 
-df = pd.DataFrame(data)
+    df = pd.DataFrame(data)
 
-x = df
-
+    x = 
 #Code Extraction Alexanders Code
 
 
