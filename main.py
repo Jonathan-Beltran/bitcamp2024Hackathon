@@ -67,19 +67,36 @@ if __name__ == "__main__":
     main()
 
 #Alex code
+#Alex code
 def read_file(filename):
-    with open(filename) as file:
+    with open(filename, 'r') as file:
         lines = file.readlines()
     return lines
 
 def make_table(lines):
-    data = []
-    for line in lines:
-        data.append(line)
+    # data = []
+    # for line in lines:
+    #     data.append(line)
+    words = lines.split()
+    labeled_data = {
+        'text': [words],
+        'category': ['Federal Agency', 'Values', 'dates', 'company names', 'locations']
+    }
+    df = pd.DataFrame(labeled_data)
 
-    df = pd.DataFrame(data)
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(df['text'])
 
-    x = 
+    classifier = multinomialNB()
+    classifier.fit(X, df['category'])
+
+    predicted_categories = classifier.predict(X)
+
+    result_df = pd.dataFrame({
+        'word': df['text'].iloc[0],
+        'predicted_category': predicted_categories
+    })
+    print(result_df)
 #Code Extraction Alexanders Code
 
 
