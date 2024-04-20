@@ -1,9 +1,10 @@
 import os
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-
+from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import re
 
 class WebsiteScraper:
     def __init__(self, url):
@@ -31,6 +32,26 @@ class WebsiteScraper:
             self.get_driver()
         self.driver.get(self.url)
 
+    def extract_information(self):
+        """Extracts information from the webpage using BeautifulSoup."""
+        if not self.driver:
+            self.get_driver()
+        self.driver.get(self.url)
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'a')))
+        page_source = self.driver.page_source
+        soup = BeautifulSoup(page_source, 'html.parser')
+
+        # Find all <h3> elements
+        h3_elements = soup.find_all('h3')
+
+        # Print the text content of each <h3> element
+        for h3 in h3_elements:
+            print(h3.get_text())
+
+    def close_driver(self):
+        """Closes the web driver."""
+        if self.driver:
+            self.driver.quit()
 
 def main():
     target_url = "https://www.defense.gov/News/Contracts/"
@@ -39,18 +60,11 @@ def main():
     os.environ['CHROMEDRIVER_PATH'] = '/path/to/chromedriver'  # Replace with your ChromeDriver path
 
     scraper = WebsiteScraper(target_url)
-    scraper.navigate_to_url()
-
-    # Your data extraction and processing logic using the driver object goes here
-    # For example:
-    print(scraper.driver.page_source)
-
-    scraper.driver.quit()
-
+    scraper.extract_information()
+    scraper.close_driver()
 
 if __name__ == "__main__":
     main()
-
 
 #Alex code
 def read_file(filename):
