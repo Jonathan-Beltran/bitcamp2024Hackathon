@@ -2,6 +2,7 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 
 
 class WebsiteScraper:
@@ -49,6 +50,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+#Alex's code
+with open(filename) as file:
+    lines = file.readlines()
+
+data = []
+for line in lines:
+    data.append(line)
+
+df = pd.DataFrame(data)
+
+x = df
 
 #Code Extraction Alexanders Code
 
