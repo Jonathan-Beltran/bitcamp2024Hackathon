@@ -78,6 +78,45 @@ class WebsiteScraper:
         if self.driver:
             self.driver.quit()
 
+def read_file(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+    return lines
+
+
+def make_table(lines):
+    words = lines.split()
+    categories = ['Federal Agency', 'Values', 'dates', 'company names', 'locations']
+
+    # Flatten the labeled_data dictionary
+    labeled_data = {
+        'text': [],
+        'category': []
+    }
+    for word in words:
+        labeled_data['text'].append(word)
+        labeled_data['category'].append(categories)  # All words are associated with all categories
+
+    # Create DataFrame
+    df = pd.DataFrame(labeled_data)
+
+    categories_array = [category for sublist in df['category'] for category in sublist]
+
+    vectorizer = TfidfVectorizer()
+    x = vectorizer.fit_transform(df['text'])
+
+    classifier = MultinomialNB()
+    classifier.fit(x, categories_array)
+
+    predicted_categories = classifier.predict(X)
+
+    result_df = pd.dataFrame({
+        'word': df['text'],
+        'predicted_category': predicted_categories
+    })
+    print(result_df)
+
+
 def main():
     target_url = "https://www.defense.gov/News/Contracts/"
 
@@ -90,35 +129,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-#Alex code
-def read_file(filename):
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-    return lines
-
-def make_table(lines):
-    # data = []
-    # for line in lines:
-    #     data.append(line)
-    words = lines.split()
-    labeled_data = {
-        'text': [words],
-        'category': ['Federal Agency', 'Values', 'dates', 'company names', 'locations']
-    }
-    df = pd.DataFrame(labeled_data)
-
-    vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(df['text'])
-
-    classifier = multinomialNB()
-    classifier.fit(X, df['category'])
-
-    predicted_categories = classifier.predict(X)
-
-    result_df = pd.dataFrame({
-        'word': df['text'].iloc[0],
-        'predicted_category': predicted_categories
-    })
-    print(result_df)
