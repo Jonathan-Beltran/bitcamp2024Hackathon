@@ -67,7 +67,6 @@ if __name__ == "__main__":
     main()
 
 #Alex code
-#Alex code
 def read_file(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -97,6 +96,3 @@ def make_table(lines):
         'predicted_category': predicted_categories
     })
     print(result_df)
-#Code Extraction Alexanders Code
-
-
