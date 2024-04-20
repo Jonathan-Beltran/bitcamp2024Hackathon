@@ -61,7 +61,7 @@ def read_file(filename):
 def make_table(lines):
     data = []
     for line in lines
-        data.appen(line)
+        data.append(line)
 
     df = pd.DataFrame(data)
 
